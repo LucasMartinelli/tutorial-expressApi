@@ -1,17 +1,28 @@
 'use strict';
 
 const express = require('express');
+const mongoose = require('mongoose');
+const config = require('./config');
 
 const app = express();
-const router = express.Router();
+
+mongoose.connect(config.connectionString, {
+   useNewUrlParser: true,
+   useUnifiedTopology: true
+ })
+ 
+const indexRoute = require('./routes/index-route');
+//const productRoute = require('./routes/product-route');
+
+app.use(express.json({
+    limit: '5mb'
+}));
+app.use(express.urlencoded({ 
+   extended: true
+}));
 
 
-const route = router.get('/', (req, res, next) => {
-   res.status(200).send({
-      title: "Node Store API",
-      version: "0.0.1"
-   });
-});
-app.use('/', route);
+app.use('/', indexRoute);
+//app.use('/products', productRoute);
 
 module.exports = app;
